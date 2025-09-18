@@ -6,6 +6,10 @@ import {
   initializeBackupData,
   clearOldBackupData,
 } from "../services/dataManager";
+import {
+  initializeAnalytics,
+  trackPortfolioInteraction,
+} from "../lib/analytics";
 import Header from "./Header";
 import Hero from "./Hero";
 import About from "./About";
@@ -43,6 +47,9 @@ const Portfolio = () => {
         // Initialize backup data and clear old backups
         initializeBackupData();
         clearOldBackupData();
+
+        // Initialize analytics
+        initializeAnalytics();
 
         // Fetch all portfolio data concurrently
         const [
@@ -106,7 +113,11 @@ const Portfolio = () => {
             scrollPosition >= offsetTop &&
             scrollPosition < offsetTop + offsetHeight
           ) {
-            setActiveSection(section);
+            if (activeSection !== section) {
+              setActiveSection(section);
+              // Track section view
+              trackPortfolioInteraction("view_section", section);
+            }
             break;
           }
         }
