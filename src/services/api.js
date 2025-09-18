@@ -2,6 +2,7 @@ import axios from "axios";
 import { saveDataToBackup, loadDataFromBackup } from "./backupData";
 
 const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
   process.env.REACT_APP_BACKEND_URL ||
   "https://chaitanya-portfolio-backend.onrender.com";
 const API_BASE = `${BACKEND_URL}/api`;

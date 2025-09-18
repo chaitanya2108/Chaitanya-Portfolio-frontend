@@ -16,7 +16,11 @@
     "test:coverage": "jest --coverage",
     "preview": "next build && next start",
     "clean": "rm -rf .next out dist",
-    "export": "next build && next export"
+    "export": "next build && next export",
+    "test:backend": "node test-backend-apis.js",
+    "test:backend:bash": "chmod +x test-apis.sh && ./test-apis.sh",
+    "test:backend:win": "test-apis.bat",
+    "debug:env": "node debug-env.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
