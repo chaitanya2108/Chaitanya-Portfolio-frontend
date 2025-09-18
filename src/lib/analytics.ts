@@ -7,6 +7,14 @@ interface AnalyticsEvent {
   value?: number;
 }
 
+// Extend Window interface to include gtag
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+    dataLayer?: unknown[];
+  }
+}
+
 // Google Analytics 4 configuration
 export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;
 
@@ -21,8 +29,8 @@ export const initGA = () => {
 
     // Initialize gtag
     window.dataLayer = window.dataLayer || [];
-    function gtag(...args: any[]) {
-      window.dataLayer.push(args);
+    function gtag(...args: unknown[]) {
+      window.dataLayer?.push(args);
     }
     gtag("js", new Date());
     gtag("config", GA_TRACKING_ID, {
@@ -31,14 +39,14 @@ export const initGA = () => {
     });
 
     // Make gtag available globally
-    (window as any).gtag = gtag;
+    window.gtag = gtag;
   }
 };
 
 // Track page views
 export const trackPageView = (url: string) => {
-  if (typeof window !== "undefined" && (window as any).gtag) {
-    (window as any).gtag("config", GA_TRACKING_ID, {
+  if (typeof window !== "undefined" && window.gtag) {
+    window.gtag("config", GA_TRACKING_ID, {
       page_path: url,
     });
   }
@@ -51,8 +59,8 @@ export const trackEvent = ({
   label,
   value,
 }: AnalyticsEvent) => {
-  if (typeof window !== "undefined" && (window as any).gtag) {
-    (window as any).gtag("event", action, {
+  if (typeof window !== "undefined" && window.gtag) {
+    window.gtag("event", action, {
       event_category: category,
       event_label: label,
       value: value,

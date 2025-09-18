@@ -1,10 +1,5 @@
 import axios from "axios";
-import {
-  getBackupData,
-  saveDataToBackup,
-  loadDataFromBackup,
-  isBackupDataRecent,
-} from "./backupData";
+import { saveDataToBackup, loadDataFromBackup } from "./backupData";
 
 const BACKEND_URL =
   process.env.REACT_APP_BACKEND_URL ||

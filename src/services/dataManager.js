@@ -46,7 +46,7 @@ export const getDataWithFallback = async (apiFunction, dataKey) => {
     saveDataToBackup(backupData);
 
     return data;
-  } catch (err) {
+  } catch {
     // eslint-disable-next-line no-console
     console.log(`API failed for ${dataKey}, using backup data`);
     const backupData = loadDataFromBackup();
