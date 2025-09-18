@@ -10,6 +10,7 @@ import {
   initializeAnalytics,
   trackPortfolioInteraction,
 } from "../lib/analytics";
+import { clearAllCaches, shouldForceFreshData } from "../utils/freshData";
 import Header from "./Header";
 import Hero from "./Hero";
 import About from "./About";
@@ -23,6 +24,7 @@ import Contact from "./Contact";
 import Footer from "./Footer";
 import LoadingSpinner from "./LoadingSpinner";
 import OfflineIndicator from "./OfflineIndicator";
+import RefreshButton from "./RefreshButton";
 
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState("home");
@@ -43,6 +45,9 @@ const Portfolio = () => {
       try {
         setLoading(true);
         setError(null);
+
+        // Clear all caches to ensure fresh API calls
+        await clearAllCaches();
 
         // Initialize backup data and clear old backups
         initializeBackupData();
@@ -89,6 +94,62 @@ const Portfolio = () => {
 
     fetchPortfolioData();
   }, []);
+
+  // Function to refresh data
+  const refreshData = async () => {
+    const fetchPortfolioData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Clear all caches to ensure fresh API calls
+        await clearAllCaches();
+
+        // Initialize backup data and clear old backups
+        initializeBackupData();
+        clearOldBackupData();
+
+        // Initialize analytics
+        initializeAnalytics();
+
+        // Fetch all portfolio data concurrently
+        const [
+          profile,
+          experience,
+          education,
+          skills,
+          projects,
+          achievements,
+          blogPosts,
+        ] = await Promise.all([
+          portfolioAPI.getProfile(),
+          portfolioAPI.getExperience(),
+          portfolioAPI.getEducation(),
+          portfolioAPI.getSkills(),
+          portfolioAPI.getProjects(),
+          portfolioAPI.getAchievements(),
+          portfolioAPI.getBlogPosts(),
+        ]);
+
+        setPortfolioData({
+          profile,
+          experience,
+          education,
+          skills,
+          projects,
+          achievements,
+          blogPosts,
+        });
+      } catch (err) {
+        console.error("Error fetching portfolio data:", err);
+        setError("Failed to load portfolio data. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    await fetchPortfolioData();
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -151,6 +212,7 @@ const Portfolio = () => {
   return (
     <div className="portfolio">
       <OfflineIndicator />
+      <RefreshButton onRefresh={refreshData} />
       <Header activeSection={activeSection} />
       <main>
         <Hero profile={portfolioData.profile} />

@@ -13,12 +13,25 @@ const api = axios.create({
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
+    // Add cache-busting headers to ensure fresh data
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
   },
 });
 
-// Request interceptor for logging
+// Request interceptor for logging and cache-busting
 api.interceptors.request.use(
   (config) => {
+    // Add cache-busting parameter for GET requests
+    if (config.method === "get") {
+      const timestamp = new Date().getTime();
+      config.params = {
+        ...config.params,
+        _t: timestamp, // Cache-busting timestamp
+      };
+    }
+
     console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },
