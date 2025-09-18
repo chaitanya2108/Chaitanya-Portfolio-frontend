@@ -12,6 +12,7 @@ export const initializeBackupData = () => {
     const existingBackup = localStorage.getItem("portfolio_backup");
 
     if (!existingBackup) {
+      // eslint-disable-next-line no-console
       console.log("Initializing backup data for the first time");
       const defaultData = getBackupData();
       saveDataToBackup(defaultData);
@@ -20,6 +21,7 @@ export const initializeBackupData = () => {
 
     return loadDataFromBackup();
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Failed to initialize backup data:", error);
     return getBackupData();
   }
@@ -44,7 +46,8 @@ export const getDataWithFallback = async (apiFunction, dataKey) => {
     saveDataToBackup(backupData);
 
     return data;
-  } catch (error) {
+  } catch (err) {
+    // eslint-disable-next-line no-console
     console.log(`API failed for ${dataKey}, using backup data`);
     const backupData = loadDataFromBackup();
     return backupData[dataKey];
@@ -62,6 +65,7 @@ export const clearOldBackupData = () => {
     const daysDiff = (now - backupTime) / (1000 * 60 * 60 * 24);
 
     if (daysDiff > 7) {
+      // eslint-disable-next-line no-console
       console.log("Clearing old backup data (older than 7 days)");
       localStorage.removeItem("portfolio_backup");
       localStorage.removeItem("portfolio_backup_timestamp");
@@ -71,6 +75,7 @@ export const clearOldBackupData = () => {
       saveDataToBackup(defaultData);
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Failed to clear old backup data:", error);
   }
 };
@@ -98,6 +103,7 @@ export const getBackupDataStatus = () => {
       isRecent,
     };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Failed to get backup data status:", error);
     return {
       hasBackup: false,
@@ -110,6 +116,7 @@ export const getBackupDataStatus = () => {
 // Force refresh backup data from API
 export const refreshBackupData = async (portfolioAPI) => {
   try {
+    // eslint-disable-next-line no-console
     console.log("Refreshing backup data from API...");
 
     const [
@@ -141,16 +148,18 @@ export const refreshBackupData = async (portfolioAPI) => {
     };
 
     saveDataToBackup(freshData);
+    // eslint-disable-next-line no-console
     console.log("Backup data refreshed successfully");
 
     return freshData;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Failed to refresh backup data:", error);
     throw error;
   }
 };
 
-export default {
+const dataManager = {
   initializeBackupData,
   shouldUseBackupData,
   getDataWithFallback,
@@ -158,3 +167,5 @@ export default {
   getBackupDataStatus,
   refreshBackupData,
 };
+
+export default dataManager;

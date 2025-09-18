@@ -442,8 +442,10 @@ export const saveDataToBackup = (data) => {
       "portfolio_backup_timestamp",
       new Date().toISOString()
     );
+    // eslint-disable-next-line no-console
     console.log("Portfolio data backed up to localStorage");
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Failed to save backup data:", error);
   }
 };
@@ -455,10 +457,12 @@ export const loadDataFromBackup = () => {
     const timestamp = localStorage.getItem("portfolio_backup_timestamp");
 
     if (backupData) {
+      // eslint-disable-next-line no-console
       console.log("Loading portfolio data from backup (saved:", timestamp, ")");
       return JSON.parse(backupData);
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Failed to load backup data:", error);
   }
 
@@ -478,6 +482,7 @@ export const isBackupDataRecent = () => {
 
     return hoursDiff < 24; // Consider backup recent if less than 24 hours old
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Failed to check backup data age:", error);
     return false;
   }
